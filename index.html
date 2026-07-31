@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ricochet Padel Orchard — Rain Call</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#0a0a0a;
+    --muted:#5c5c5c;
+    --red:#d21f1f;
+    --red-ink:#ffffff;
+    --red-tint:#fbe4e4;
+    --line:#0a0a0a;
+    --line-soft:#c9c9c9;
+    --ok:#0a7a3d;
+    --warn-bg:#fff1cc;
+    --card-bg:#ffffff;
+    --font-body: 'Archivo', system-ui, sans-serif;
+    --font-black: 'Archivo Black', 'Archivo', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0a0a0a;
+      --fg:#f3f3f3;
+      --muted:#b3b3b3;
+      --red:#ff4136;
+      --red-ink:#0a0a0a;
+      --red-tint:#2b0e0e;
+      --line:#f3f3f3;
+      --line-soft:#3d3d3d;
+      --ok:#3ddc84;
+      --warn-bg:#3a2c00;
+      --card-bg:#0a0a0a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a0a0a; --fg:#f3f3f3; --muted:#b3b3b3; --red:#ff4136; --red-ink:#0a0a0a;
+    --red-tint:#2b0e0e; --line:#f3f3f3; --line-soft:#3d3d3d; --ok:#3ddc84; --warn-bg:#3a2c00; --card-bg:#0a0a0a;
+  }
+  :root[data-theme="light"]{
+    --bg:#ffffff; --fg:#0a0a0a; --muted:#5c5c5c; --red:#d21f1f; --red-ink:#ffffff;
+    --red-tint:#fbe4e4; --line:#0a0a0a; --line-soft:#c9c9c9; --ok:#0a7a3d; --warn-bg:#fff1cc; --card-bg:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);}
+  body{
+    font-family:var(--font-body);
+    font-weight:500;
+    line-height:1.35;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--red);color:var(--red-ink);}
+  a{color:var(--red);}
+  button{font-family:var(--font-body);}
+  .wrap{max-width:920px;margin:0 auto;padding:0 18px 64px;}
+  /* ---------- header ---------- */
+  header.top{
+    border-bottom:3px solid var(--line);
+    padding:16px 0 14px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .brand{min-width:0;flex:1 1 auto;}
+  .eyebrow{
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--red);font-weight:800;margin:0 0 4px;
+  }
+  h1{
+    font-family:var(--font-black);
+    font-size:clamp(22px,5vw,32px);
+    line-height:1.05;
+    margin:0;
+    letter-spacing:-.01em;
+    text-wrap:balance;
+  }
+  .coords{font-size:12px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums;}
+  .paddle-wrap{flex:0 0 auto;width:64px;height:64px;}
+  .paddle-wrap svg{width:100%;height:100%;display:block;}
+  /* ---------- status bar ---------- */
+  .statusbar{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;
+    padding:10px 0;border-bottom:1px solid var(--line-soft);
+    font-size:12px;color:var(--muted);
+  }
+  .statusbar strong{color:var(--fg);font-variant-numeric:tabular-nums;}
+  .dot{width:8px;height:8px;background:var(--ok);display:inline-block;margin-right:6px;}
+  .dot.bad{background:var(--red);}
+  .btn{
+    border:2px solid var(--line);background:var(--bg);color:var(--fg);
+    font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;
+    padding:7px 14px;cursor:pointer;border-radius:0;
+  }
+  .btn:hover{background:var(--fg);color:var(--bg);}
+  .btn:focus-visible, a:focus-visible, input:focus-visible{outline:3px solid var(--red);outline-offset:2px;}
+  .spacer{flex:1 1 auto;}
+  /* ---------- headline ---------- */
+  .headline{
+    border:3px solid var(--line);margin-top:20px;
+  }
+  .headline-top{
+    background:var(--fg);color:var(--bg);
+    padding:16px 20px;
+    display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
+  }
+  .pct{
+    font-family:var(--font-black);
+    font-size:clamp(48px,12vw,84px);
+    line-height:.9;
+    letter-spacing:-.02em;
+  }
+  .pct sup{font-size:.32em;margin-left:2px;}
+  .pct-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);font-weight:800;}
+  .call{
+    font-family:var(--font-black);
+    font-size:clamp(18px,4vw,26px);
+    margin-top:2px;
+  }
+  .headline-sub{
+    padding:12px 20px 16px;
+    font-size:13px;color:var(--muted);
+    border-top:1px solid var(--line-soft);
+  }
+  .headline-sub b{color:var(--fg);}
+  /* ---------- section ---------- */
+  section{margin-top:26px;}
+  h2{
+    font-family:var(--font-black);
+    font-size:14px;text-transform:uppercase;letter-spacing:.08em;
+    border-bottom:3px solid var(--line);padding-bottom:8px;margin:0 0 14px;
+  }
+  h2 .tag{color:var(--red);}
+  /* ---------- timeline ---------- */
+  .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--line);border:2px solid var(--line);}
+  .slot{background:var(--bg);padding:14px 10px;text-align:center;}
+  .slot .t{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+  .slot .p{font-family:var(--font-black);font-size:clamp(20px,4vw,30px);}
+  .slot .bar{height:5px;background:var(--line-soft);margin-top:8px;position:relative;}
+  .slot .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--red);}
+  .slot .label{font-size:10px;margin-top:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  /* ---------- storm banner ---------- */
+  .storm{
+    border:3px solid var(--red);padding:14px 16px;display:flex;gap:12px;align-items:flex-start;
+  }
+  .storm.clear{border-color:var(--line-soft);}
+  .storm .ic{flex:0 0 auto;font-family:var(--font-black);font-size:22px;color:var(--red);line-height:1;}
+  .storm.clear .ic{color:var(--ok);}
+  .storm .body b{display:block;font-size:15px;margin-bottom:3px;}
+  .storm .meta{font-size:11.5px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums;}
+  /* ---------- grid cards ---------- */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:560px){.cards{grid-template-columns:1fr;}}
+  .card{border:2px solid var(--line);padding:14px 16px;}
+  .card h3{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;}
+  .card .big{font-family:var(--font-black);font-size:32px;line-height:1;}
+  .card .small{font-size:12px;color:var(--muted);margin-top:6px;}
+  .uv-scale{display:flex;height:6px;margin-top:10px;border:1px solid var(--line);}
+  .uv-scale i{flex:1;}
+  /* radar */
+  .radar-imgs{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:560px){.radar-imgs{grid-template-columns:1fr;}}
+  .radar-box{border:2px solid var(--line);background:repeating-linear-gradient(45deg,var(--card-bg),var(--card-bg) 10px,var(--red-tint) 10px,var(--red-tint) 11px);}
+  .radar-box img{width:100%;display:block;background:#e8e8e8;}
+  .radar-cap{font-size:11px;color:var(--muted);padding:8px 10px;border-top:1px solid var(--line-soft);}
+  /* checklist */
+  .checklist{border:2px solid var(--line);}
+  .cl-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line-soft);}
+  .cl-item:last-child{border-bottom:none;}
+  .cl-item input{width:18px;height:18px;accent-color:var(--red);flex:0 0 auto;}
+  .cl-item label{font-size:14px;font-weight:600;cursor:pointer;}
+  .cl-item.done label{text-decoration:line-through;color:var(--muted);}
+  /* confidence */
+  details.conf{border:2px solid var(--line);}
+  details.conf summary{
+    padding:12px 14px;cursor:pointer;font-weight:800;font-size:13px;
+    text-transform:uppercase;letter-spacing:.05em;list-style:none;display:flex;justify-content:space-between;align-items:center;
+  }
+  details.conf summary::-webkit-details-marker{display:none;}
+  details.conf summary .chev{font-family:var(--font-black);}
+  details.conf[open] summary .chev{transform:rotate(45deg);display:inline-block;}
+  .conf-body{padding:0 14px 14px;font-size:13px;}
+  .conf-disclaimer{background:var(--red-tint);border:1px solid var(--red);padding:10px 12px;font-size:12.5px;margin-bottom:12px;}
+  table.src{width:100%;border-collapse:collapse;font-size:12.5px;}
+  table.src th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--line);}
+  table.src td{padding:8px 8px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+  table.src td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .badge{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border:1px solid currentColor;}
+  .badge.ok{color:var(--ok);}
+  .badge.err{color:var(--red);}
+  .overall-conf{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:12.5px;}
+  .overall-conf .pip{display:flex;gap:3px;}
+  .overall-conf .pip span{width:16px;height:8px;background:var(--line-soft);}
+  .overall-conf .pip span.on{background:var(--red);}
+  /* log */
+  .log-wrap{border:2px solid var(--line);max-height:280px;overflow:auto;}
+  table.log{width:100%;border-collapse:collapse;font-size:12px;}
+  table.log th{position:sticky;top:0;background:var(--fg);color:var(--bg);text-align:left;padding:8px;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;}
+  table.log td{padding:7px 8px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums;}
+  table.log tr:last-child td{border-bottom:none;}
+  .log-empty{padding:20px;text-align:center;color:var(--muted);font-size:12.5px;}
+  .log-actions{display:flex;justify-content:flex-end;margin-top:8px;}
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line-soft);font-size:11px;color:var(--muted);}
+  footer a{color:var(--muted);text-decoration:underline;}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <p class="eyebrow">Padel Weather Call</p>
+      <h1>Ricochet Padel Orchard Rain Forecast</h1>
+      <p class="coords">1.303308, 103.836058 &middot; Orchard, Singapore</p>
+    </div>
+    <div class="paddle-wrap" aria-hidden="true">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="73" cy="23" r="12" fill="#d7e021"/>
+        <path d="M 63 23 Q 73 14 83 23" stroke="var(--bg)" stroke-width="1.6" fill="none"/>
+        <path d="M 63 23 Q 73 32 83 23" stroke="var(--bg)" stroke-width="1.6" fill="none"/>
+        <g transform="rotate(-28 45 58)">
+          <ellipse cx="44" cy="34" rx="19" ry="23" fill="var(--fg)"/>
+          <ellipse cx="44" cy="34" rx="16" ry="20" fill="var(--red)"/>
+          <circle cx="44" cy="20" r="2" fill="var(--bg)"/>
+          <circle cx="35" cy="26" r="2" fill="var(--bg)"/>
+          <circle cx="53" cy="26" r="2" fill="var(--bg)"/>
+          <circle cx="35" cy="38" r="2" fill="var(--bg)"/>
+          <circle cx="53" cy="38" r="2" fill="var(--bg)"/>
+          <circle cx="44" cy="34" r="2" fill="var(--bg)"/>
+          <circle cx="35" cy="46" r="2" fill="var(--bg)"/>
+          <circle cx="53" cy="46" r="2" fill="var(--bg)"/>
+          <circle cx="44" cy="48" r="2" fill="var(--bg)"/>
+          <rect x="40" y="55" width="8" height="26" fill="var(--fg)"/>
+          <rect x="38" y="80" width="12" height="7" fill="var(--fg)"/>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <div class="statusbar">
+    <span><span class="dot" id="status-dot"></span><span id="status-text">Loading live data…</span></span>
+    <span>Updated <strong id="last-updated">—</strong></span>
+    <span>Next refresh <strong id="next-refresh">—</strong></span>
+    <span class="spacer"></span>
+    <button class="btn" id="refresh-btn">Refresh now</button>
+  </div>
+
+  <div class="headline" id="headline-card">
+    <div class="headline-top">
+      <div>
+        <div class="pct-label">Probability of rain</div>
+        <div class="pct" id="headline-pct">—<sup>%</sup></div>
+      </div>
+      <div class="call" id="headline-call">Loading forecast…</div>
+    </div>
+    <div class="headline-sub" id="headline-sub">
+      Peak chance of rain over your next 4 hours on court, from NEA nowcast + 24hr forecast + live rain gauges.
+    </div>
+  </div>
+
+  <section>
+    <h2>Next 4 Hours <span class="tag">— Hour by Hour</span></h2>
+    <div class="timeline" id="timeline">
+      <div class="slot"><div class="t">+1h</div><div class="p">—</div><div class="bar"><i style="width:0%"></i></div><div class="label">—</div></div>
+      <div class="slot"><div class="t">+2h</div><div class="p">—</div><div class="bar"><i style="width:0%"></i></div><div class="label">—</div></div>
+      <div class="slot"><div class="t">+3h</div><div class="p">—</div><div class="bar"><i style="width:0%"></i></div><div class="label">—</div></div>
+      <div class="slot"><div class="t">+4h</div><div class="p">—</div><div class="bar"><i style="width:0%"></i></div><div class="label">—</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Thunderstorm Warning</h2>
+    <div class="storm clear" id="storm-box">
+      <div class="ic">i</div>
+      <div class="body">
+        <b id="storm-headline">Checking for nearby thunderstorm activity…</b>
+        <div id="storm-detail"></div>
+        <div class="meta" id="storm-meta"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Live Conditions</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>UV Index</h3>
+        <div class="big" id="uv-value">—</div>
+        <div class="small" id="uv-cat">Loading…</div>
+        <div class="uv-scale">
+          <i style="background:#8bc34a"></i><i style="background:#ffeb3b"></i><i style="background:#ff9800"></i><i style="background:#e53935"></i><i style="background:#8e24aa"></i>
+        </div>
+        <div class="small" id="uv-time"></div>
+      </div>
+      <div class="card">
+        <h3>Rain Gauges Nearby</h3>
+        <div class="big" id="gauge-value">—</div>
+        <div class="small" id="gauge-detail">Loading…</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Live Radar</h2>
+    <div class="radar-imgs">
+      <div class="radar-box">
+        <img id="radar-70" alt="NEA 70km rain radar centred on Singapore" src="">
+        <div class="radar-cap" id="radar-70-cap">Loading…</div>
+      </div>
+      <div class="radar-box">
+        <img id="radar-240" alt="NEA 240km rain radar, wider region" src="">
+        <div class="radar-cap" id="radar-240-cap">Loading…</div>
+      </div>
+    </div>
+    <p class="small" style="color:var(--muted);font-size:11.5px;margin-top:8px;">
+      Ricochet Padel Orchard sits in the city centre, close to the Singapore River and Orchard Road — right in the middle of the radar's central cluster. Full interactive map: <a href="https://www.nea.gov.sg/weather/rain-areas" target="_blank" rel="noopener">nea.gov.sg/weather/rain-areas</a>
+    </p>
+  </section>
+
+  <section>
+    <h2>Before You Leave Home</h2>
+    <div class="checklist" id="checklist"></div>
+  </section>
+
+  <section>
+    <h2>Confidence &amp; Data Sources</h2>
+    <details class="conf" open>
+      <summary>How this call is calculated <span class="chev">+</span></summary>
+      <div class="conf-body">
+        <div class="conf-disclaimer">
+          This is a heuristic estimate built by combining NEA's categorical forecasts — NEA does not publish an official "% chance of rain" for Singapore. Treat this as a guide, not a guarantee, especially for sudden convective storms.
+        </div>
+        <table class="src">
+          <thead><tr><th>Source</th><th>Feeds</th><th>Weight</th><th>Status</th><th>Updated</th></tr></thead>
+          <tbody id="source-table"></tbody>
+        </table>
+        <div class="overall-conf">
+          <span>Overall confidence:</span>
+          <span class="pip" id="conf-pips"><span></span><span></span><span></span><span></span></span>
+          <strong id="conf-label">—</strong>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Session Log</h2>
+    <div class="log-wrap">
+      <table class="log">
+        <thead><tr><th>Time</th><th>Rain %</th><th>Call</th><th>Storm</th></tr></thead>
+        <tbody id="log-body"></tbody>
+      </table>
+      <div class="log-empty" id="log-empty">No checks logged yet this session.</div>
+    </div>
+    <div class="log-actions"><button class="btn" id="clear-log-btn">Clear log</button></div>
+  </section>
+
+  <footer>
+    Data: NEA Singapore via data.gov.sg (2-Hour Nowcast, 24-Hour Forecast, Rainfall stations, UV Index) and
+    <a href="https://www.nea.gov.sg/weather/rain-areas" target="_blank" rel="noopener">nea.gov.sg/weather/rain-areas</a> radar imagery. Auto-refreshes every 5 minutes while this page stays open. Built for Ricochet Padel Orchard sessions — not an official weather product.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var VENUE = {lat: 1.303308, lon: 103.836058};
+  var REGION = "central"; // Ricochet Padel Orchard falls in NEA's "central" 24hr-forecast region
+  var STORM_RADIUS_KM = 10;
+  var REFRESH_MS = 5 * 60 * 1000;
+  var LOG_KEY = "padel_orchard_session_log_v1";
+  var CHECKLIST_ITEMS = [
+    {id:"radar", label:"Checked the live radar for approaching rain"},
+    {id:"storm", label:"Checked the thunderstorm warning"},
+    {id:"uv", label:"Checked UV index and packed sun protection if high"},
+    {id:"cover", label:"Packed a rain cover / towel just in case"}
+  ];
+
+  var URLS = {
+    twoHr: "https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast",
+    day24: "https://api-open.data.gov.sg/v2/real-time/api/twenty-four-hr-forecast",
+    rain: "https://api-open.data.gov.sg/v2/real-time/api/rainfall",
+    uv: "https://api.data.gov.sg/v1/environment/uv-index"
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  function haversineKm(lat1, lon1, lat2, lon2){
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+            Math.sin(dLon/2)*Math.sin(dLon/2);
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  function textScore(text){
+    var t = (text || "").toLowerCase();
+    if (t.indexOf("thundery") !== -1) return 90;
+    if (t.indexOf("heavy") !== -1) return 75;
+    if (t.indexOf("showers") !== -1) return 55;
+    if (t.indexOf("drizzle") !== -1) return 45;
+    if (t.indexOf("rain") !== -1) return 40;
+    if (t.indexOf("overcast") !== -1) return 25;
+    if (t.indexOf("partly cloudy") !== -1) return 12;
+    if (t.indexOf("cloudy") !== -1) return 22;
+    if (t.indexOf("mist") !== -1 || t.indexOf("fog") !== -1 || t.indexOf("hazy") !== -1) return 10;
+    if (t.indexOf("fair") !== -1 || t.indexOf("sunny") !== -1 || t.indexOf("clear") !== -1) return 5;
+    return 15;
+  }
+
+  function callFor(pct){
+    if (pct < 15) return "Clear to play — low rain risk";
+    if (pct < 35) return "Likely fine — keep an eye out";
+    if (pct < 60) return "Borderline — rain possible, have a backup";
+    if (pct < 80) return "Risky — rain likely at some point";
+    return "Don't bother — rain or storms likely";
+  }
+
+  function fmtTime(d){
+    return d.toLocaleTimeString("en-SG", {hour:"2-digit", minute:"2-digit", hour12:false, timeZone:"Asia/Singapore"}) + " SGT";
+  }
+  function fmtAgo(d){
+    var diffSec = Math.round((Date.now() - d.getTime())/1000);
+    if (diffSec < 60) return diffSec + "s ago";
+    var m = Math.round(diffSec/60);
+    return m + "m ago";
+  }
+
+  // ---------- radar image handling ----------
+  function sgtWallMinutes(){
+    var sgt = new Date(Date.now() + 8*3600*1000);
+    return {
+      totalMin: sgt.getUTCHours()*60 + sgt.getUTCMinutes(),
+      y: sgt.getUTCFullYear(), mo: sgt.getUTCMonth()+1, d: sgt.getUTCDate()
+    };
+  }
+  function pad(n){ return String(n).length < 2 ? "0"+n : String(n); }
+
+  function radarUrl(kind, backSteps){
+    var interval = kind === "70km" ? 5 : 10;
+    var w = sgtWallMinutes();
+    var rounded = Math.floor(w.totalMin/interval)*interval - backSteps*interval;
+    var dayOffset = 0;
+    while (rounded < 0){ rounded += 24*60; dayOffset -= 1; }
+    var h = Math.floor(rounded/60) % 24;
+    var m = rounded % 60;
+    var dt = new Date(Date.UTC(w.y, w.mo-1, w.d));
+    dt.setUTCDate(dt.getUTCDate() + dayOffset);
+    var stamp = dt.getUTCFullYear() + pad(dt.getUTCMonth()+1) + pad(dt.getUTCDate()) + pad(h) + pad(m) + "0000";
+    var folder = kind === "70km" ? "rain-area" : "rain-area-240km";
+    var file = kind === "70km" ? ("dpsri_70km_" + stamp + "dBR.dpsri.png") : ("dpsri_240km_" + stamp + "dBR.dpsri.png");
+    return "https://www.nea.gov.sg/docs/default-source/" + folder + "/" + file;
+  }
+
+  function loadRadar(kind, imgId, capId){
+    var img = $(imgId), cap = $(capId);
+    var attempt = 0, maxAttempts = 5;
+    function tryLoad(){
+      if (attempt >= maxAttempts){
+        cap.textContent = "Radar image unavailable right now — view live on nea.gov.sg.";
+        img.style.display = "none";
+        return;
+      }
+      var url = radarUrl(kind, attempt);
+      img.onerror = function(){ attempt += 1; tryLoad(); };
+      img.onload = function(){
+        img.style.display = "block";
+        cap.textContent = (kind === "70km" ? "70km composite" : "240km composite") + " — image timestamp " + attempt + " step(s) back from now, NEA rain-areas feed.";
+      };
+      img.src = url;
+    }
+    tryLoad();
+  }
+
+  // ---------- session log ----------
+  function readLog(){
+    try { return JSON.parse(localStorage.getItem(LOG_KEY)) || []; } catch(e){ return []; }
+  }
+  function writeLog(entries){
+    localStorage.setItem(LOG_KEY, JSON.stringify(entries.slice(0, 100)));
+  }
+  function addLogEntry(entry){
+    var entries = readLog();
+    entries.unshift(entry);
+    writeLog(entries);
+    renderLog();
+  }
+  function renderLog(){
+    var entries = readLog();
+    var body = $("log-body"), empty = $("log-empty");
+    body.innerHTML = "";
+    if (entries.length === 0){ empty.style.display = "block"; return; }
+    empty.style.display = "none";
+    entries.forEach(function(e){
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>" + e.time + "</td><td>" + e.pct + "%</td><td>" + e.call + "</td><td>" + e.storm + "</td>";
+      body.appendChild(tr);
+    });
+  }
+  $("clear-log-btn").addEventListener("click", function(){
+    if (confirm("Clear the session log?")){ writeLog([]); renderLog(); }
+  });
+
+  // ---------- checklist ----------
+  function checklistKey(){
+    var d = new Date();
+    return "padel_orchard_checklist_" + d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+  }
+  function renderChecklist(){
+    var key = checklistKey();
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(key)) || {}; } catch(e){ state = {}; }
+    var wrap = $("checklist");
+    wrap.innerHTML = "";
+    CHECKLIST_ITEMS.forEach(function(item){
+      var row = document.createElement("div");
+      row.className = "cl-item" + (state[item.id] ? " done" : "");
+      var cb = document.createElement("input");
+      cb.type = "checkbox"; cb.id = "cl-" + item.id; cb.checked = !!state[item.id];
+      var label = document.createElement("label");
+      label.htmlFor = cb.id; label.textContent = item.label;
+      cb.addEventListener("change", function(){
+        state[item.id] = cb.checked;
+        localStorage.setItem(key, JSON.stringify(state));
+        row.className = "cl-item" + (cb.checked ? " done" : "");
+      });
+      row.appendChild(cb); row.appendChild(label);
+      wrap.appendChild(row);
+    });
+  }
+
+  // ---------- countdown ----------
+  var nextRefreshAt = Date.now() + REFRESH_MS;
+  function tickCountdown(){
+    var remain = Math.max(0, Math.round((nextRefreshAt - Date.now())/1000));
+    var m = Math.floor(remain/60), s = remain % 60;
+    $("next-refresh").textContent = m + ":" + pad(s);
+    if ($("last-updated").dataset.ts){
+      $("last-updated").textContent = fmtAgo(new Date($("last-updated").dataset.ts));
+    }
+  }
+  setInterval(tickCountdown, 1000);
+
+  // ---------- main fetch + compute ----------
+  function fetchJson(url){
+    return fetch(url).then(function(r){
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  }
+
+  function setSourceRow(tbody, name, feeds, weight, ok, updated){
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + name + "</td><td>" + feeds + "</td><td class='num'>" + weight + "</td>" +
+      "<td><span class='badge " + (ok ? "ok'>OK" : "err'>Error") + "</span></td>" +
+      "<td class='num'>" + (updated ? updated : "—") + "</td>";
+    tbody.appendChild(tr);
+  }
+
+  function refresh(){
+    $("status-text").textContent = "Refreshing…";
+    $("status-dot").className = "dot";
+    nextRefreshAt = Date.now() + REFRESH_MS;
+
+    var results = { twoHr:null, day24:null, rain:null, uv:null };
+    var okCount = 0;
+
+    var p1 = fetchJson(URLS.twoHr).then(function(j){ results.twoHr = j; okCount++; }).catch(function(){});
+    var p2 = fetchJson(URLS.day24).then(function(j){ results.day24 = j; okCount++; }).catch(function(){});
+    var p3 = fetchJson(URLS.rain).then(function(j){ results.rain = j; okCount++; }).catch(function(){});
+    var p4 = fetchJson(URLS.uv).then(function(j){ results.uv = j; okCount++; }).catch(function(){});
+
+    Promise.all([p1,p2,p3,p4]).then(function(){
+      compute(results, okCount);
+      $("status-dot").className = "dot";
+      $("status-text").textContent = okCount === 4 ? "Live — all sources OK" : (okCount === 0 ? "All sources unreachable" : "Live — partial data (" + okCount + "/4 sources)");
+      if (okCount === 0) $("status-dot").className = "dot bad";
+      var now = new Date();
+      $("last-updated").dataset.ts = now.toISOString();
+      $("last-updated").textContent = "just now";
+    });
+  }
+
+  function compute(results, okCount){
+    var sourceTbody = $("source-table");
+    sourceTbody.innerHTML = "";
+
+    // ---- 2-hour nowcast: nearest area + storm scan ----
+    var nowcastScore = 15, nowcastAreaName = "—", nowcastTs = null;
+    var nearestStormKm = Infinity, nearestStormArea = null;
+    if (results.twoHr && results.twoHr.data){
+      var meta = results.twoHr.data.area_metadata || [];
+      var item = (results.twoHr.data.items || [])[0];
+      var forecasts = item ? item.forecasts : [];
+      nowcastTs = item ? item.timestamp : null;
+      var coordByArea = {};
+      meta.forEach(function(a){ coordByArea[a.name] = a.label_location; });
+
+      var bestDist = Infinity, bestText = "";
+      forecasts.forEach(function(f){
+        var loc = coordByArea[f.area];
+        if (!loc) return;
+        var d = haversineKm(VENUE.lat, VENUE.lon, loc.latitude, loc.longitude);
+        if (d < bestDist){ bestDist = d; nowcastAreaName = f.area; bestText = f.forecast; }
+        if (f.forecast && f.forecast.toLowerCase().indexOf("thundery") !== -1){
+          if (d < nearestStormKm){ nearestStormKm = d; nearestStormArea = f.area; }
+        }
+      });
+      nowcastScore = textScore(bestText);
+      setSourceRow(sourceTbody, "2-Hour Nowcast", "Immediate rain risk, thunderstorm scan", "45%", true, nowcastTs ? fmtTime(new Date(nowcastTs)) : "—");
+    } else {
+      setSourceRow(sourceTbody, "2-Hour Nowcast", "Immediate rain risk, thunderstorm scan", "45%", false, "—");
+    }
+
+    // ---- 24-hour forecast: region text per period ----
+    var periodScores = [15,15,15,15];
+    var day24Ts = null, generalText = "";
+    if (results.day24 && results.day24.data && results.day24.data.records && results.day24.data.records[0]){
+      var rec = results.day24.data.records[0];
+      day24Ts = rec.updatedTimestamp;
+      generalText = rec.general && rec.general.forecast ? rec.general.forecast.text : "";
+      var periods = rec.periods || [];
+      var now = Date.now();
+      for (var h = 1; h <= 4; h++){
+        var target = now + h*3600*1000;
+        var text = generalText;
+        for (var i=0;i<periods.length;i++){
+          var start = new Date(periods[i].timePeriod.start).getTime();
+          var end = new Date(periods[i].timePeriod.end).getTime();
+          if (target >= start && target <= end && periods[i].regions && periods[i].regions[REGION]){
+            text = periods[i].regions[REGION].text;
+            break;
+          }
+        }
+        periodScores[h-1] = textScore(text);
+      }
+      setSourceRow(sourceTbody, "24-Hour Forecast", "Central-region outlook for +3h/+4h", "35%", true, day24Ts ? fmtTime(new Date(day24Ts)) : "—");
+    } else {
+      setSourceRow(sourceTbody, "24-Hour Forecast", "Central-region outlook for +3h/+4h", "35%", false, "—");
+    }
+
+    // ---- rain gauges nearby ----
+    var rainingNow = false, gaugeMaxMm = 0, gaugeStationName = null, gaugeTs = null, nearbyCount = 0;
+    if (results.rain && results.rain.data){
+      var stations = results.rain.data.stations || [];
+      var readings = results.rain.data.readings || [];
+      var latest = readings[readings.length-1];
+      gaugeTs = latest ? latest.timestamp : null;
+      var valById = {};
+      if (latest) latest.data.forEach(function(d){ valById[d.stationId] = d.value; });
+      stations.forEach(function(s){
+        var d = haversineKm(VENUE.lat, VENUE.lon, s.location.latitude, s.location.longitude);
+        if (d <= 5){
+          nearbyCount++;
+          var v = valById[s.id] || 0;
+          if (v > gaugeMaxMm){ gaugeMaxMm = v; gaugeStationName = s.name; }
+        }
+      });
+      rainingNow = gaugeMaxMm > 0.2;
+      setSourceRow(sourceTbody, "Rain Gauges", "Ground-truth rainfall within 5km", "20%", true, gaugeTs ? fmtTime(new Date(gaugeTs)) : "—");
+      $("gauge-value").textContent = gaugeMaxMm > 0 ? gaugeMaxMm.toFixed(1) + " mm" : "0 mm";
+      $("gauge-detail").textContent = nearbyCount > 0
+        ? (rainingNow ? "Rain detected at " + gaugeStationName + " (nearest of " + nearbyCount + " stations within 5km)" : nearbyCount + " station(s) within 5km, all dry right now")
+        : "No gauge stations within 5km";
+    } else {
+      setSourceRow(sourceTbody, "Rain Gauges", "Ground-truth rainfall within 5km", "20%", false, "—");
+      $("gauge-value").textContent = "—";
+      $("gauge-detail").textContent = "Data unavailable";
+    }
+
+    // ---- UV index ----
+    if (results.uv && results.uv.items && results.uv.items[0]){
+      var idxArr = results.uv.items[0].index || [];
+      var latestUv = idxArr[0];
+      if (latestUv){
+        var uv = latestUv.value;
+        $("uv-value").textContent = uv;
+        var cat = uv <= 2 ? "Low" : uv <= 5 ? "Moderate" : uv <= 7 ? "High" : uv <= 10 ? "Very High" : "Extreme";
+        $("uv-cat").textContent = cat;
+        $("uv-time").textContent = "As of " + fmtTime(new Date(latestUv.timestamp));
+      }
+      setSourceRow(sourceTbody, "UV Index", "Sun exposure context", "informational", true, results.uv.items[0].update_timestamp ? fmtTime(new Date(results.uv.items[0].update_timestamp)) : "—");
+    } else {
+      $("uv-value").textContent = "—";
+      $("uv-cat").textContent = "Data unavailable";
+      setSourceRow(sourceTbody, "UV Index", "Sun exposure context", "informational", false, "—");
+    }
+
+    // ---- combine into hourly probabilities ----
+    var h1 = Math.round(nowcastScore*0.7 + periodScores[0]*0.3 + (rainingNow ? 15 : 0));
+    var h2 = Math.round(nowcastScore*0.5 + periodScores[1]*0.5 + (rainingNow ? 8 : 0));
+    var h3 = Math.round(periodScores[2]*0.85 + nowcastScore*0.15);
+    var h4 = Math.round(periodScores[3]*0.90 + nowcastScore*0.10);
+    var hours = [h1,h2,h3,h4].map(function(v){ return Math.max(0, Math.min(100, v)); });
+
+    var slots = document.querySelectorAll("#timeline .slot");
+    var now = new Date();
+    hours.forEach(function(v, idx){
+      var slot = slots[idx];
+      var t = new Date(now.getTime() + (idx+1)*3600*1000);
+      slot.querySelector(".t").textContent = t.toLocaleTimeString("en-SG",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Singapore"});
+      slot.querySelector(".p").textContent = v + "%";
+      slot.querySelector(".bar i").style.width = v + "%";
+      slot.querySelector(".label").textContent = v < 15 ? "Clear" : v < 35 ? "Watch" : v < 60 ? "Borderline" : v < 80 ? "Risky" : "Wet";
+    });
+
+    var headline = Math.max.apply(null, hours);
+    var call = callFor(headline);
+    $("headline-pct").innerHTML = headline + "<sup>%</sup>";
+    $("headline-call").textContent = call;
+    $("headline-sub").innerHTML = "Nearest forecast area: <b>" + nowcastAreaName + "</b> &middot; central-region 24hr outlook: <b>" + (generalText || "—") + "</b>" +
+      (rainingNow ? " &middot; rain detected on nearby gauges right now" : "");
+
+    // ---- thunderstorm warning gating (within 10km only) ----
+    var stormBox = $("storm-box");
+    if (nearestStormKm <= STORM_RADIUS_KM){
+      stormBox.className = "storm";
+      $("storm-headline").textContent = "Thunderstorm activity " + nearestStormKm.toFixed(1) + " km away";
+      $("storm-detail").textContent = "Nearest thundery cell reported near " + nearestStormArea + ", within the " + STORM_RADIUS_KM + " km warning radius of Ricochet Padel Orchard.";
+      $("storm-meta").textContent = "Source: NEA 2-Hour Nowcast forecast areas — updated " + (nowcastTs ? fmtTime(new Date(nowcastTs)) : "—") + ". Distance is approximate, measured to the forecast area's reference point, not a precise strike location.";
+    } else {
+      stormBox.className = "storm clear";
+      $("storm-headline").textContent = "No thunderstorm warning";
+      $("storm-detail").textContent = isFinite(nearestStormKm)
+        ? "Nearest thundery forecast area is " + nearestStormArea + ", " + nearestStormKm.toFixed(1) + " km away — outside the " + STORM_RADIUS_KM + " km radius, so no warning is shown."
+        : "No areas are currently forecast as thundery anywhere in Singapore.";
+      $("storm-meta").textContent = "Source: NEA 2-Hour Nowcast forecast areas — updated " + (nowcastTs ? fmtTime(new Date(nowcastTs)) : "—") + ".";
+    }
+
+    // ---- overall confidence ----
+    var pips = document.querySelectorAll("#conf-pips span");
+    var level = okCount === 4 ? 3 : okCount === 3 ? 2 : okCount >= 1 ? 1 : 0;
+    pips.forEach(function(p, i){ p.className = i < (level+1) ? "on" : ""; });
+    var confLabels = ["Very low — no sources reachable","Low — most sources missing","Moderate — heuristic model on partial data","Moderate — heuristic model, all sources live"];
+    $("conf-label").textContent = confLabels[level];
+
+    // ---- log entry ----
+    addLogEntry({
+      time: fmtTime(new Date()),
+      pct: headline,
+      call: call,
+      storm: nearestStormKm <= STORM_RADIUS_KM ? nearestStormKm.toFixed(1) + "km" : "none <" + STORM_RADIUS_KM + "km"
+    });
+  }
+
+  // ---------- init ----------
+  loadRadar("70km", "radar-70", "radar-70-cap");
+  loadRadar("240km", "radar-240", "radar-240-cap");
+  renderChecklist();
+  renderLog();
+  $("refresh-btn").addEventListener("click", refresh);
+  refresh();
+  setInterval(refresh, REFRESH_MS);
+  tickCountdown();
+
+  setInterval(function(){
+    loadRadar("70km", "radar-70", "radar-70-cap");
+    loadRadar("240km", "radar-240", "radar-240-cap");
+  }, REFRESH_MS);
+})();
+</script>
+</body>
+</html>
