@@ -100,6 +100,8 @@
     padding:7px 14px;cursor:pointer;border-radius:0;
   }
   .btn:hover{background:var(--fg);color:var(--bg);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn:disabled:hover{background:var(--bg);color:var(--fg);}
   .btn:focus-visible, a:focus-visible, input:focus-visible{outline:3px solid var(--red);outline-offset:2px;}
   .spacer{flex:1 1 auto;}
   /* ---------- headline ---------- */
@@ -403,6 +405,13 @@
   var REGION = "central"; // Orchard Road falls in NEA's central forecast and air-quality region, and (by postal-district mapping) NEA's "central" PSI region too
   var STORM_RADIUS_KM = 10;
   var REFRESH_MS = 5 * 60 * 1000;
+
+  // data.gov.sg unauthenticated v2 realtime APIs are rate-limited.
+  // This page makes 5 v2 calls per refresh, so block rapid repeat refreshes.
+  var MIN_REFRESH_GAP_MS = 12 * 1000;
+  var refreshInFlight = false;
+  var lastRefreshStartedAt = 0;
+
   var LOG_KEY = "orchard_weather_session_log_v1";
   var CHECKLIST_ITEMS = [
     {id:"radar", label:"Checked the live radar for approaching rain"},
@@ -638,7 +647,12 @@
   // ---------- main fetch + compute ----------
   function fetchJson(url){
     return fetch(url).then(function(r){
-      if (!r.ok) throw new Error("HTTP " + r.status);
+      if (!r.ok){
+        var err = new Error("HTTP " + r.status);
+        err.status = r.status;
+        err.url = url;
+        throw err;
+      }
       return r.json();
     });
   }
@@ -650,27 +664,88 @@
     tbody.appendChild(tr);
   }
   function refresh(){
+    var nowMs = Date.now();
+
+    // Prevent double-clicks / rapid consecutive manual refreshes from hitting
+    // data.gov.sg's unauthenticated v2 rate limit.
+    if (refreshInFlight){
+      $("status-text").textContent = "Refresh already in progress…";
+      return;
+    }
+
+    var elapsed = nowMs - lastRefreshStartedAt;
+    if (lastRefreshStartedAt && elapsed < MIN_REFRESH_GAP_MS){
+      var waitSec = Math.ceil((MIN_REFRESH_GAP_MS - elapsed) / 1000);
+      $("status-text").textContent = "Live — refresh available in " + waitSec + "s";
+      return;
+    }
+
+    refreshInFlight = true;
+    lastRefreshStartedAt = nowMs;
+    $("refresh-btn").disabled = true;
     $("status-text").textContent = "Refreshing…";
     $("status-dot").className = "dot";
     nextRefreshAt = Date.now() + REFRESH_MS;
+
     var results = { twoHr:null, day24:null, rain:null, uv:null, psi:null, pm25:null };
     var okCount = 0;
-    var p1 = fetchJson(URLS.twoHr).then(function(j){ results.twoHr = j; okCount++; }).catch(function(){});
-    var p2 = fetchJson(URLS.day24).then(function(j){ results.day24 = j; okCount++; }).catch(function(){});
-    var p3 = fetchJson(URLS.rain).then(function(j){ results.rain = j; okCount++; }).catch(function(){});
-    var p4 = fetchJson(URLS.uv).then(function(j){ results.uv = j; okCount++; }).catch(function(){});
-    var p5 = fetchJson(URLS.psi).then(function(j){ results.psi = j; okCount++; }).catch(function(){});
-    var p6 = fetchJson(URLS.pm25).then(function(j){ results.pm25 = j; okCount++; }).catch(function(){});
+    var errors = [];
+
+    function getSource(key, url){
+      return fetchJson(url)
+        .then(function(j){
+          results[key] = j;
+          okCount++;
+        })
+        .catch(function(err){
+          errors.push({key:key, status:err.status || 0, message:err.message});
+          console.warn("Weather source failed:", key, err.message, url);
+        });
+    }
+
+    var p1 = getSource("twoHr", URLS.twoHr);
+    var p2 = getSource("day24", URLS.day24);
+    var p3 = getSource("rain", URLS.rain);
+    var p4 = getSource("uv", URLS.uv);
+    var p5 = getSource("psi", URLS.psi);
+    var p6 = getSource("pm25", URLS.pm25);
+
     Promise.all([p1,p2,p3,p4,p5,p6]).then(function(){
-      compute(results, okCount);
-      $("status-dot").className = "dot";
-      $("status-text").textContent = okCount === SOURCE_COUNT ? "Live — all sources OK" : (okCount === 0 ? "All sources unreachable" : "Live — partial data (" + okCount + "/" + SOURCE_COUNT + " sources)");
-      if (okCount === 0) $("status-dot").className = "dot bad";
-      var now = new Date();
-      $("last-updated").dataset.ts = now.toISOString();
-      $("last-updated").textContent = "just now";
+      // Never manufacture a new rain percentage from the placeholder 15 scores
+      // when one of the three rain-critical feeds failed. Keep the previous
+      // displayed reading instead.
+      var rainCoreOk = !!(results.twoHr && results.day24 && results.rain);
+
+      if (rainCoreOk){
+        compute(results, okCount);
+
+        $("status-dot").className = "dot";
+        $("status-text").textContent =
+          okCount === SOURCE_COUNT
+            ? "Live — all sources OK"
+            : "Live — rain feeds OK; partial supporting data (" + okCount + "/" + SOURCE_COUNT + " sources)";
+
+        var now = new Date();
+        $("last-updated").dataset.ts = now.toISOString();
+        $("last-updated").textContent = "just now";
+      } else {
+        var rateLimited = errors.some(function(e){ return e.status === 429; });
+        $("status-dot").className = "dot bad";
+        $("status-text").textContent = rateLimited
+          ? "Rate limited — previous reading retained. Try again after 10–12 seconds."
+          : "Refresh incomplete — previous reading retained.";
+      }
+    }).finally(function(){
+      refreshInFlight = false;
+
+      // Keep the button disabled until the safe refresh gap has elapsed.
+      var remaining = Math.max(0, MIN_REFRESH_GAP_MS - (Date.now() - lastRefreshStartedAt));
+      setTimeout(function(){
+        $("refresh-btn").disabled = false;
+      }, remaining);
     });
   }
+
   function compute(results, okCount){
     var sourceTbody = $("source-table");
     sourceTbody.innerHTML = "";
