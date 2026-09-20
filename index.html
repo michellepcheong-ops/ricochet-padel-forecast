@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orchard Road — Weather</title>
+<title>Orchard Road — Outdoor Rain Call</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Archivo+Black&display=swap" rel="stylesheet">
@@ -232,24 +232,23 @@
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <p class="eyebrow">Outdoor Activities Weather Call</p>
+      <p class="eyebrow">Outdoor Weather Call</p>
       <h1>Orchard Road Rain Forecast</h1>
-      <p class="coords">1.3040, 103.8318 &middot; Orchard Road, Singapore </p>
+      <p class="coords">1.3040, 103.8318 &middot; Orchard Road, Singapore</p>
     </div>
     <div class="icon-wrap" aria-hidden="true">
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- hair -->
-        <circle cx="50" cy="47" r="34" fill="var(--fg)"/>
-        <!-- face -->
-        <circle cx="50" cy="48" r="27" fill="var(--red)"/>
-        <!-- sunglasses -->
-        <rect x="27" y="39" width="20" height="11" rx="5" fill="var(--fg)"/>
-        <rect x="53" y="39" width="20" height="11" rx="5" fill="var(--fg)"/>
-        <rect x="46" y="42" width="8" height="4" fill="var(--fg)"/>
-        <!-- smile -->
-        <path d="M39 59 Q50 69 61 59" fill="none" stroke="var(--fg)" stroke-width="3" stroke-linecap="round"/>
-        <!-- shoulders -->
-        <path d="M24 92 Q27 69 50 69 Q73 69 76 92" fill="var(--red)"/>
+        <circle cx="35" cy="35" r="16" fill="var(--red)"/>
+        <g stroke="var(--red)" stroke-width="4" stroke-linecap="round">
+          <line x1="35" y1="8" x2="35" y2="16"/>
+          <line x1="35" y1="54" x2="35" y2="62"/>
+          <line x1="8" y1="35" x2="16" y2="35"/>
+          <line x1="54" y1="35" x2="62" y2="35"/>
+          <line x1="16" y1="16" x2="22" y2="22"/>
+          <line x1="48" y1="48" x2="54" y2="54"/>
+        </g>
+        <path d="M27 72h45c9 0 16-6 16-14s-7-14-16-14c-2 0-4 0-6 1C62 36 54 31 44 31c-13 0-23 9-25 21-8 1-14 7-14 14 0 4 2 6 4 6h18z"
+              fill="var(--fg)"/>
       </svg>
     </div>
   </header>
@@ -263,13 +262,13 @@
   <div class="headline" id="headline-card">
     <div class="headline-top">
       <div>
-        <div class="pct-label">Probability of rain</div>
+        <div class="pct-label">Heuristic rain risk</div>
         <div class="pct" id="headline-pct">—<sup>%</sup></div>
       </div>
       <div class="call" id="headline-call">Loading forecast…</div>
     </div>
     <div class="headline-sub" id="headline-sub">
-      Peak chance of rain over your next 4 hours in the area, from NEA nowcast + 24hr forecast + live rain gauges.
+      Highest estimated rain risk over the next 4 hours, using the local NEA 2-hour nowcast, nearby rain gauges and the broader 24-hour outlook.
     </div>
   </div>
   <section>
@@ -344,6 +343,9 @@
   </section>
   <section>
     <h2>Live Radar</h2>
+    <p class="small" style="color:var(--muted);font-size:11.5px;margin-top:0;">
+      Radar is shown for visual confirmation only; the page does not automatically analyse radar pixels when calculating the numerical rain-risk score.
+    </p>
     <div class="radar-imgs">
       <div class="radar-box">
         <img id="radar-70" alt="NEA 70km rain radar centred on Singapore" src="">
@@ -368,7 +370,7 @@
       <summary>How this call is calculated <span class="chev">+</span></summary>
       <div class="conf-body">
         <div class="conf-disclaimer">
-          This is a heuristic estimate built by combining NEA's categorical forecasts — NEA does not publish an official "% chance of rain" for Singapore. Treat this as a guide, not a guarantee, especially for sudden convective storms. The air quality advisory below combines the 24-hour PSI guidance with NEA's 1-hour PM2.5 guide for immediate outdoor activity. It is informational, not medical advice, and does not itself change the rain probability shown above.
+          This is a heuristic rain-risk estimate, not an official probability. NEA publishes categorical forecasts rather than a point-specific "% chance of rain" for Orchard Road. For the next 1–2 hours, this page gives more weight to the nearest NEA 2-hour forecast area and nearby rain gauges. For hours 3–4, it gives progressively more weight to the broader Central-region 24-hour outlook. A "thundery showers" forecast therefore raises risk without automatically becoming 90%. The air-quality advisory combines 24-hour PSI guidance with NEA's 1-hour PM2.5 guide for immediate outdoor activity.
         </div>
         <table class="src">
           <thead><tr><th>Source</th><th>Feeds</th><th>Weight</th><th>Status</th><th>Updated</th></tr></thead>
@@ -395,24 +397,23 @@
   </section>
   <footer>
     Data: NEA Singapore via data.gov.sg (2-Hour Nowcast, 24-Hour Forecast, Rainfall stations, UV Index, PSI, 1-hour PM2.5) and
-    <a href="https://www.nea.gov.sg/weather/rain-areas" target="_blank" rel="noopener">nea.gov.sg/weather/rain-areas</a> radar imagery. Auto-refreshes every 5 minutes while this page stays open. Built for Orchard Road outdoor sessions — not an official weather product, and the air quality advisory is not a substitute for MOH/NEA guidance for at-risk individuals.
+    <a href="https://www.nea.gov.sg/weather/rain-areas" target="_blank" rel="noopener">nea.gov.sg/weather/rain-areas</a> radar imagery. Auto-refreshes every 15 minutes while this page stays open. Built for outdoor activities around Orchard Road — not an official weather product, and the air quality advisory is not a substitute for MOH/NEA guidance for at-risk individuals.
   </footer>
 </div>
 <script>
 (function(){
   "use strict";
   var LOC = {lat: 1.3040, lon: 103.8318};
-  var REGION = "central"; // Orchard Road falls in NEA's central forecast and air-quality region, and (by postal-district mapping) NEA's "central" PSI region too
+  var REGION = "central"; // Orchard Road falls in NEA's central forecast and air-quality region
   var STORM_RADIUS_KM = 10;
-  var REFRESH_MS = 5 * 60 * 1000;
+  var REFRESH_MS = 15 * 60 * 1000;
 
-  // data.gov.sg unauthenticated v2 realtime APIs are rate-limited.
-  // This page makes 5 v2 calls per refresh, so block rapid repeat refreshes.
-  var MIN_REFRESH_GAP_MS = 12 * 1000;
+  // Prevent overlapping batches. A single page refresh makes five v2
+  // data.gov.sg calls; overlapping batches can hit the unauthenticated limit.
   var refreshInFlight = false;
-  var lastRefreshStartedAt = 0;
+  var RATE_LIMIT_RETRY_MS = 10500;
 
-  var LOG_KEY = "orchard_weather_session_log_v1";
+  var LOG_KEY = "orchard_outdoor_session_log_v1";
   var CHECKLIST_ITEMS = [
     {id:"radar", label:"Checked the live radar for approaching rain"},
     {id:"storm", label:"Checked the thunderstorm warning"},
@@ -439,26 +440,42 @@
             Math.sin(dLon/2)*Math.sin(dLon/2);
     return 2 * R * Math.asin(Math.sqrt(a));
   }
-  function textScore(text){
+  function localNowcastScore(text){
     var t = (text || "").toLowerCase();
-    if (t.indexOf("thundery") !== -1) return 90;
-    if (t.indexOf("heavy") !== -1) return 75;
-    if (t.indexOf("showers") !== -1) return 55;
-    if (t.indexOf("drizzle") !== -1) return 45;
-    if (t.indexOf("rain") !== -1) return 40;
-    if (t.indexOf("overcast") !== -1) return 25;
+    if (t.indexOf("thundery") !== -1) return 65;
+    if (t.indexOf("heavy") !== -1) return 65;
+    if (t.indexOf("showers") !== -1) return 45;
+    if (t.indexOf("drizzle") !== -1) return 35;
+    if (t.indexOf("rain") !== -1) return 35;
+    if (t.indexOf("overcast") !== -1) return 22;
     if (t.indexOf("partly cloudy") !== -1) return 12;
-    if (t.indexOf("cloudy") !== -1) return 22;
+    if (t.indexOf("cloudy") !== -1) return 18;
     if (t.indexOf("mist") !== -1 || t.indexOf("fog") !== -1 || t.indexOf("hazy") !== -1) return 10;
     if (t.indexOf("fair") !== -1 || t.indexOf("sunny") !== -1 || t.indexOf("clear") !== -1) return 5;
     return 15;
   }
+
+  function regionalOutlookScore(text){
+    var t = (text || "").toLowerCase();
+    if (t.indexOf("thundery") !== -1) return 45;
+    if (t.indexOf("heavy") !== -1) return 45;
+    if (t.indexOf("showers") !== -1) return 35;
+    if (t.indexOf("drizzle") !== -1) return 25;
+    if (t.indexOf("rain") !== -1) return 28;
+    if (t.indexOf("overcast") !== -1) return 20;
+    if (t.indexOf("partly cloudy") !== -1) return 10;
+    if (t.indexOf("cloudy") !== -1) return 15;
+    if (t.indexOf("mist") !== -1 || t.indexOf("fog") !== -1 || t.indexOf("hazy") !== -1) return 8;
+    if (t.indexOf("fair") !== -1 || t.indexOf("sunny") !== -1 || t.indexOf("clear") !== -1) return 5;
+    return 12;
+  }
+
   function callFor(pct){
-    if (pct < 15) return "Clear to go out — low rain risk";
-    if (pct < 35) return "Likely fine — keep an eye on the sky";
-    if (pct < 60) return "Borderline — rain possible, have an indoor backup";
-    if (pct < 80) return "Risky — rain likely at some point";
-    return "Best stay indoors — rain or storms likely";
+    if (pct < 20) return "Low rain risk — conditions look favourable";
+    if (pct < 40) return "Some rain risk — keep an eye on nearby showers";
+    if (pct < 60) return "Moderate rain risk — have a sheltered backup";
+    if (pct < 75) return "High rain risk — showers or storms are plausible";
+    return "Very high rain risk — wet conditions likely nearby";
   }
   // ---------- PSI / air quality advisory ----------
   // Bands + exertion advisory per NEA/MOH's published 24-hr PSI health advisory table
@@ -512,12 +529,12 @@
     var level = Math.max(p ? p.level : 0, m ? m.level : 0);
     var cls = level === 0 ? "clear" : (level === 1 ? "warn" : "bad");
     var headline = level === 0
-      ? "Air quality OK — fine to play"
+      ? "Air quality OK — fine to be outdoors"
       : level === 1
-        ? "Air quality caution — ease off strenuous play"
+        ? "Air quality caution — ease off strenuous outdoor activity"
         : level === 2
-          ? "Air quality poor — avoid strenuous outdoor play"
-          : "Air quality very poor — don't play outside";
+          ? "Air quality poor — avoid strenuous outdoor activity"
+          : "Air quality very poor — minimise outdoor activity";
 
     var parts = [];
     if (p) parts.push("24-hr PSI " + psi + " (" + p.cat + "): " + p.guidance);
@@ -609,7 +626,7 @@
   // ---------- checklist ----------
   function checklistKey(){
     var d = new Date();
-    return "orchard_weather_checklist_" + d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+    return "orchard_outdoor_checklist_" + d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
   }
   function renderChecklist(){
     var key = checklistKey();
@@ -645,14 +662,30 @@
   }
   setInterval(tickCountdown, 1000);
   // ---------- main fetch + compute ----------
-  function fetchJson(url){
-    return fetch(url).then(function(r){
+  function sleep(ms){
+    return new Promise(function(resolve){ setTimeout(resolve, ms); });
+  }
+
+  function fetchJson(url, retryCount){
+    retryCount = retryCount || 0;
+
+    return fetch(url, {cache:"no-store"}).then(function(r){
+      if (r.status === 429 && retryCount < 1){
+        $("status-dot").className = "dot bad";
+        $("status-text").textContent =
+          "data.gov.sg rate limit reached — retrying automatically in about 10 seconds…";
+
+        return sleep(RATE_LIMIT_RETRY_MS).then(function(){
+          return fetchJson(url, retryCount + 1);
+        });
+      }
+
       if (!r.ok){
         var err = new Error("HTTP " + r.status);
         err.status = r.status;
-        err.url = url;
         throw err;
       }
+
       return r.json();
     });
   }
@@ -664,88 +697,37 @@
     tbody.appendChild(tr);
   }
   function refresh(){
-    var nowMs = Date.now();
-
-    // Prevent double-clicks / rapid consecutive manual refreshes from hitting
-    // data.gov.sg's unauthenticated v2 rate limit.
     if (refreshInFlight){
-      $("status-text").textContent = "Refresh already in progress…";
-      return;
-    }
-
-    var elapsed = nowMs - lastRefreshStartedAt;
-    if (lastRefreshStartedAt && elapsed < MIN_REFRESH_GAP_MS){
-      var waitSec = Math.ceil((MIN_REFRESH_GAP_MS - elapsed) / 1000);
-      $("status-text").textContent = "Live — refresh available in " + waitSec + "s";
+      $("status-text").textContent = "Refresh already in progress — please wait…";
       return;
     }
 
     refreshInFlight = true;
-    lastRefreshStartedAt = nowMs;
     $("refresh-btn").disabled = true;
     $("status-text").textContent = "Refreshing…";
     $("status-dot").className = "dot";
     nextRefreshAt = Date.now() + REFRESH_MS;
-
     var results = { twoHr:null, day24:null, rain:null, uv:null, psi:null, pm25:null };
     var okCount = 0;
-    var errors = [];
-
-    function getSource(key, url){
-      return fetchJson(url)
-        .then(function(j){
-          results[key] = j;
-          okCount++;
-        })
-        .catch(function(err){
-          errors.push({key:key, status:err.status || 0, message:err.message});
-          console.warn("Weather source failed:", key, err.message, url);
-        });
-    }
-
-    var p1 = getSource("twoHr", URLS.twoHr);
-    var p2 = getSource("day24", URLS.day24);
-    var p3 = getSource("rain", URLS.rain);
-    var p4 = getSource("uv", URLS.uv);
-    var p5 = getSource("psi", URLS.psi);
-    var p6 = getSource("pm25", URLS.pm25);
-
+    var p1 = fetchJson(URLS.twoHr).then(function(j){ results.twoHr = j; okCount++; }).catch(function(e){ console.warn("2-hour forecast failed:", e); });
+    var p2 = fetchJson(URLS.day24).then(function(j){ results.day24 = j; okCount++; }).catch(function(e){ console.warn("24-hour forecast failed:", e); });
+    var p3 = fetchJson(URLS.rain).then(function(j){ results.rain = j; okCount++; }).catch(function(e){ console.warn("Rainfall failed:", e); });
+    var p4 = fetchJson(URLS.uv).then(function(j){ results.uv = j; okCount++; }).catch(function(e){ console.warn("UV failed:", e); });
+    var p5 = fetchJson(URLS.psi).then(function(j){ results.psi = j; okCount++; }).catch(function(e){ console.warn("PSI failed:", e); });
+    var p6 = fetchJson(URLS.pm25).then(function(j){ results.pm25 = j; okCount++; }).catch(function(e){ console.warn("PM2.5 failed:", e); });
     Promise.all([p1,p2,p3,p4,p5,p6]).then(function(){
-      // Never manufacture a new rain percentage from the placeholder 15 scores
-      // when one of the three rain-critical feeds failed. Keep the previous
-      // displayed reading instead.
-      var rainCoreOk = !!(results.twoHr && results.day24 && results.rain);
-
-      if (rainCoreOk){
-        compute(results, okCount);
-
-        $("status-dot").className = "dot";
-        $("status-text").textContent =
-          okCount === SOURCE_COUNT
-            ? "Live — all sources OK"
-            : "Live — rain feeds OK; partial supporting data (" + okCount + "/" + SOURCE_COUNT + " sources)";
-
-        var now = new Date();
-        $("last-updated").dataset.ts = now.toISOString();
-        $("last-updated").textContent = "just now";
-      } else {
-        var rateLimited = errors.some(function(e){ return e.status === 429; });
-        $("status-dot").className = "dot bad";
-        $("status-text").textContent = rateLimited
-          ? "Rate limited — previous reading retained. Try again after 10–12 seconds."
-          : "Refresh incomplete — previous reading retained.";
-      }
+      compute(results, okCount);
+      $("status-dot").className = "dot";
+      $("status-text").textContent = okCount === SOURCE_COUNT ? "Live — all sources OK" : (okCount === 0 ? "All sources unreachable" : "Live — partial data (" + okCount + "/" + SOURCE_COUNT + " sources)");
+      if (okCount === 0) $("status-dot").className = "dot bad";
+      var now = new Date();
+      $("last-updated").dataset.ts = now.toISOString();
+      $("last-updated").textContent = "just now";
     }).finally(function(){
       refreshInFlight = false;
-
-      // Keep the button disabled until the safe refresh gap has elapsed.
-      var remaining = Math.max(0, MIN_REFRESH_GAP_MS - (Date.now() - lastRefreshStartedAt));
-      setTimeout(function(){
-        $("refresh-btn").disabled = false;
-      }, remaining);
+      $("refresh-btn").disabled = false;
     });
   }
-
   function compute(results, okCount){
     var sourceTbody = $("source-table");
     sourceTbody.innerHTML = "";
@@ -769,10 +751,10 @@
           if (d < nearestStormKm){ nearestStormKm = d; nearestStormArea = f.area; }
         }
       });
-      nowcastScore = textScore(bestText);
-      setSourceRow(sourceTbody, "2-Hour Nowcast", "Immediate rain risk, thunderstorm scan", "45%", true, nowcastTs ? fmtTime(new Date(nowcastTs)) : "—");
+      nowcastScore = localNowcastScore(bestText);
+      setSourceRow(sourceTbody, "2-Hour Nowcast", "Primary local signal for +1h/+2h", "80%→30%", true, nowcastTs ? fmtTime(new Date(nowcastTs)) : "—");
     } else {
-      setSourceRow(sourceTbody, "2-Hour Nowcast", "Immediate rain risk, thunderstorm scan", "45%", false, "—");
+      setSourceRow(sourceTbody, "2-Hour Nowcast", "Primary local signal for +1h/+2h", "80%→30%", false, "—");
     }
     // ---- 24-hour forecast: region text per period ----
     var periodScores = [15,15,15,15]; // placeholder for h1..h4, overwritten below
@@ -794,11 +776,11 @@
             break;
           }
         }
-        periodScores[h-1] = textScore(text);
+        periodScores[h-1] = regionalOutlookScore(text);
       }
-      setSourceRow(sourceTbody, "24-Hour Forecast", "Central-region outlook for +3h/+4h", "35%", true, day24Ts ? fmtTime(new Date(day24Ts)) : "—");
+      setSourceRow(sourceTbody, "24-Hour Forecast", "Broader Central-region outlook", "20%→70%", true, day24Ts ? fmtTime(new Date(day24Ts)) : "—");
     } else {
-      setSourceRow(sourceTbody, "24-Hour Forecast", "Central-region outlook for +3h/+4h", "35%", false, "—");
+      setSourceRow(sourceTbody, "24-Hour Forecast", "Broader Central-region outlook", "20%→70%", false, "—");
     }
     // ---- rain gauges nearby ----
     var rainingNow = false, gaugeMaxMm = 0, gaugeStationName = null, gaugeTs = null, nearbyCount = 0;
@@ -818,13 +800,13 @@
         }
       });
       rainingNow = gaugeMaxMm > 0.2;
-      setSourceRow(sourceTbody, "Rain Gauges", "Ground-truth rainfall within 5km", "20%", true, gaugeTs ? fmtTime(new Date(gaugeTs)) : "—");
+      setSourceRow(sourceTbody, "Rain Gauges", "Live rainfall check within 5km", "± adjustment", true, gaugeTs ? fmtTime(new Date(gaugeTs)) : "—");
       $("gauge-value").textContent = gaugeMaxMm > 0 ? gaugeMaxMm.toFixed(1) + " mm" : "0 mm";
       $("gauge-detail").textContent = nearbyCount > 0
         ? (rainingNow ? "Rain detected at " + gaugeStationName + " (nearest of " + nearbyCount + " stations within 5km)" : nearbyCount + " station(s) within 5km, all dry right now")
         : "No gauge stations within 5km";
     } else {
-      setSourceRow(sourceTbody, "Rain Gauges", "Ground-truth rainfall within 5km", "20%", false, "—");
+      setSourceRow(sourceTbody, "Rain Gauges", "Live rainfall check within 5km", "± adjustment", false, "—");
       $("gauge-value").textContent = "—";
       $("gauge-detail").textContent = "Data unavailable";
     }
@@ -899,11 +881,19 @@
       setSourceRow(sourceTbody, "PM2.5 (Air Quality)", "1-hr PM2.5, " + REGION + " region", "informational", false, "—");
     }
 
-    // ---- combine into hourly probabilities ----
-    var h1 = Math.round(nowcastScore*0.7 + periodScores[0]*0.3 + (rainingNow ? 15 : 0));
-    var h2 = Math.round(nowcastScore*0.5 + periodScores[1]*0.5 + (rainingNow ? 8 : 0));
-    var h3 = Math.round(periodScores[2]*0.85 + nowcastScore*0.15);
-    var h4 = Math.round(periodScores[3]*0.90 + nowcastScore*0.10);
+    // ---- combine into hourly rain-risk estimates ----
+    // Near-term: local 2-hour forecast dominates.
+    // Later: broader Central-region outlook gradually becomes more important.
+    // Dry nearby gauges lower the immediate score; detected rain raises it.
+    var liveAdj1 = rainingNow ? 22 : (nearbyCount > 0 ? -8 : 0);
+    var liveAdj2 = rainingNow ? 15 : (nearbyCount > 0 ? -5 : 0);
+    var liveAdj3 = rainingNow ? 8 : 0;
+
+    var h1 = Math.round(nowcastScore*0.80 + periodScores[0]*0.20 + liveAdj1);
+    var h2 = Math.round(nowcastScore*0.70 + periodScores[1]*0.30 + liveAdj2);
+    var h3 = Math.round(nowcastScore*0.45 + periodScores[2]*0.55 + liveAdj3);
+    var h4 = Math.round(nowcastScore*0.30 + periodScores[3]*0.70);
+
     var hours = [h1,h2,h3,h4].map(function(v){ return Math.max(0, Math.min(100, v)); });
     var slots = document.querySelectorAll("#timeline .slot");
     var hourLabels = ["+1h","+2h","+3h","+4h"];
@@ -914,20 +904,31 @@
       slot.querySelector(".t").textContent = t.toLocaleTimeString("en-SG",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Singapore"});
       slot.querySelector(".p").textContent = v + "%";
       slot.querySelector(".bar i").style.width = v + "%";
-      slot.querySelector(".label").textContent = v < 15 ? "Clear" : v < 35 ? "Watch" : v < 60 ? "Borderline" : v < 80 ? "Risky" : "Wet";
+      slot.querySelector(".label").textContent =
+        v < 20 ? "Low" :
+        v < 40 ? "Watch" :
+        v < 60 ? "Moderate" :
+        v < 75 ? "High" : "Very high";
     });
     var headline = Math.max.apply(null, hours);
     var call = callFor(headline);
     $("headline-pct").innerHTML = headline + "<sup>%</sup>";
     $("headline-call").textContent = call;
-    $("headline-sub").innerHTML = "Nearest forecast area: <b>" + nowcastAreaName + "</b> &middot; central-region 24hr outlook: <b>" + (generalText || "—") + "</b>" +
-      (rainingNow ? " &middot; rain detected on nearby gauges right now" : "");
+    $("headline-sub").innerHTML =
+      "Local 2-hour forecast area: <b>" + nowcastAreaName + "</b>" +
+      " &middot; broader Central-region outlook: <b>" + (generalText || "—") + "</b>" +
+      (rainingNow
+        ? " &middot; <b>rain detected on nearby gauges now</b>"
+        : (nearbyCount > 0 ? " &middot; nearby gauges are dry now" : ""));
     // ---- thunderstorm warning gating (within 10km only) ----
     var stormBox = $("storm-box");
     if (nearestStormKm <= STORM_RADIUS_KM){
       stormBox.className = "storm";
-      $("storm-headline").textContent = "Thunderstorm activity " + nearestStormKm.toFixed(1) + " km away";
-      $("storm-detail").textContent = "Nearest thundery cell reported near " + nearestStormArea + ", within the " + STORM_RADIUS_KM + " km warning radius of Orchard Road.";
+      $("storm-headline").textContent = "Thundery forecast area nearby";
+      $("storm-detail").textContent =
+        "NEA is forecasting thundery conditions for " + nearestStormArea +
+        ", whose reference point is about " + nearestStormKm.toFixed(1) +
+        " km from Orchard Road. This does not mean a storm is directly over Orchard Road right now.";
       $("storm-meta").textContent = "Source: NEA 2-Hour Nowcast forecast areas — updated " + (nowcastTs ? fmtTime(new Date(nowcastTs)) : "—") + ". Distance is approximate, measured to the forecast area's reference point, not a precise strike location.";
     } else {
       stormBox.className = "storm clear";
@@ -944,7 +945,7 @@
       aqiBox.className = "storm " + (combinedAqi.cls === "clear" ? "clear" : (combinedAqi.cls === "warn" ? "warn" : ""));
       $("aqi-headline").textContent = combinedAqi.headline;
       $("aqi-detail").textContent = combinedAqi.detail;
-      $("aqi-meta").textContent = "Sources: NEA 24-hr PSI + 1-hr PM2.5, " + REGION + " region. PM2.5 is the immediate-activity guide; PSI gives the longer-duration air-quality context. The banner follows the more cautious of the two readings for an outdoor walk starting now.";
+      $("aqi-meta").textContent = "Sources: NEA 24-hr PSI + 1-hr PM2.5, " + REGION + " region. PM2.5 is the immediate-activity guide; PSI gives the longer-duration air-quality context. The banner follows the more cautious of the two readings for outdoor activity starting now.";
     } else {
       aqiBox.className = "storm clear";
       $("aqi-headline").textContent = "Air quality data unavailable";
